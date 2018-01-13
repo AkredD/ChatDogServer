@@ -23,5 +23,6 @@ public class db {
             Message local = a.get(i);
             System.out.println("[" + local.getDate()+"]"+ local.getLogin() +": "+local.getMessage());
         }
+        //testUpdate
     }
 }
