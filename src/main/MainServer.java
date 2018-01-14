@@ -7,10 +7,11 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainServer {
-    private static UsersList list = new UsersList();
-    private static ChatHistory chatHistory = new ChatHistory();
+    public static Map<String, Chat> chats = new HashMap<>();
 
     public static void main(String[] args) {
         try {
@@ -33,11 +34,28 @@ public class MainServer {
         }
     }
 
-    public synchronized static UsersList getUserList() {
-        return list;
+
+    public synchronized static void createChat(String name) throws Exception{
+        if (!chats.containsKey(name)) {
+            chats.put(name, new Chat());
+            return;
+        }
+        throw new Exception("Cannot create chat, chat with name already created");
     }
 
-    public synchronized static ChatHistory getChatHistory() {
-        return chatHistory;
+    public synchronized static Chat getChat(String name) throws Exception{
+        if (chats.containsKey(name)) {
+            return chats.get(name);
+        }
+        throw new Exception("There is no chat with this name");
     }
+
+    public synchronized static void deleteChat(String name) throws Exception{
+        if (chats.containsKey(name)) {
+            chats.remove(name);
+            return;
+        }
+        throw new Exception("There is no chat with this name");
+    }
+
 }
