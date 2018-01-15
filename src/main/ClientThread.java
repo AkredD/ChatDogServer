@@ -95,8 +95,7 @@ public class ClientThread extends Thread {
                         System.out.println(login + " disconnected!");
                         for (String chat : chats){
                             try {
-                                broadcast(MainServer.getChat(chat).getOnlineUsers().getClientsList(),
-                                        new Message("Server-Bot", "The user " + login + " has been disconnect", chat));
+                                MainServer.getChat(chat).getOnlineUsers().deleteUser(login);
                             }catch (Exception er){
                                 System.out.println(er.getMessage());
                             }
@@ -126,6 +125,8 @@ public class ClientThread extends Thread {
                 }
                 this.c = (Message) inputStream.readObject();
                 //Комманды на создание/удаление/присоединение/отсоединения
+                // command - name of command
+                // action - name of chat
                 if (this.c instanceof Command ){
                     String command = this.c.getLogin();
                     String action = this.c.getMessage();
@@ -147,7 +148,7 @@ public class ClientThread extends Thread {
                                 MainServer.getChat(action).addUserToChat(login, socket, outputStream, inputStream);
                                 chats.add(action);
                                 System.out.println("The user " + login + " connected to " + action + "  successfully");
-                                this.broadcast(MainServer.getChat(c.getChatName()).getOnlineUsers().getClientsList(),
+                                this.broadcast(MainServer.getChat(action).getOnlineUsers().getClientsList(),
                                         new Message("Server-Bot", "The user " + login + " connected", action));
 
                             } else {
@@ -159,7 +160,7 @@ public class ClientThread extends Thread {
                                 MainServer.getChat(action).deleteUserFromChat(login);
                                 chats.remove(action);
                                 System.out.println("The user " + login + " disconnected from    " + action + "  successfully");
-                                this.broadcast(MainServer.getChat(c.getChatName()).getOnlineUsers().getClientsList(),
+                                this.broadcast(MainServer.getChat(action).getOnlineUsers().getClientsList(),
                                         new Message("Server-Bot", "The user " + login + " has been disconnect", action));
                             } else {
                                 System.out.println("Error(disconnected): there is no chat with this name");
@@ -199,7 +200,16 @@ public class ClientThread extends Thread {
 
         } catch (SocketException e) {
             System.out.println(login + " disconnected!");
-            //this.broadcast(MainServer.getUserList().getClientsList(), new Message("Server-Bot", "The user " + login + " has been disconnect", MainServer.getUserList().getUsers()));
+            for (String chat : chats){
+                try {
+                    MainServer.getChat(chat).getOnlineUsers().deleteUser(login);
+                    broadcast(MainServer.getChat(chat).getOnlineUsers().getClientsList(),
+                            new Message("Server-Bot", "The user " + login + " has been disconnect", chat));
+                }catch (Exception er){
+                    System.out.println(er.getMessage());
+                }
+            }
+
             this.timer.stop();
         } catch (IOException e) {
             e.printStackTrace();
