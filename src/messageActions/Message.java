@@ -2,13 +2,14 @@ package messageActions;
 
 import java.io.Serializable;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Message implements Serializable {
 
     private String login;
     private String message;
-    private String[] users;
+    private ArrayList<String> users;
     private Date time;
     private String chatName;
 
@@ -34,14 +35,14 @@ public class Message implements Serializable {
     }
 
     //Constructor for server
-    public Message(String login, String message, String[] users){
+    public Message(String login, String message, ArrayList<String> users){
         this.login = login;
         this.message = message;
         this.time = java.util.Calendar.getInstance().getTime();
         this.users = users;
     }
 
-    public void setOnlineUsers(String[] users) {
+    public void setOnlineUsers(ArrayList<String> users) {
         this.users = users;
     }
 
@@ -53,7 +54,7 @@ public class Message implements Serializable {
         return this.message;
     }
 
-    public String[] getUsers() {
+    public ArrayList<String> getUsers() {
         return this.users;
     }
 

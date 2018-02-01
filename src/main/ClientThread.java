@@ -33,6 +33,11 @@ public class ClientThread extends Thread {
 
     private void broadcast(ArrayList<Client> clientsArrayList, Message message) {
         try {
+            ArrayList <String> users = new ArrayList<>();
+            for (Client client : clientsArrayList) {
+                users.add(client.getLogin());
+            }
+            message.setOnlineUsers(users);
             for (Client client : clientsArrayList) {
                 client.getThisObjectOutputStream().writeObject(message);
             }
@@ -59,6 +64,7 @@ public class ClientThread extends Thread {
             this.c = (Message) inputStream.readObject();
             //Читаем логин отправителя
             this.login = this.c.getLogin();
+            System.out.println(login + " connected to server!");
 
             /*if (!this.c.getMessage().equals("User join to the chat(Auto-message)")) { //Если это не регистрационное сообщение
                 System.out.println("[" + this.c.getLogin() + "]: " + this.c.getMessage());
@@ -199,7 +205,7 @@ public class ClientThread extends Thread {
             }
 
         } catch (SocketException e) {
-            System.out.println(login + " disconnected!");
+            System.out.println(login + " disconnected! " + e.toString());
             for (String chat : chats){
                 try {
                     MainServer.getChat(chat).getOnlineUsers().deleteUser(login);
